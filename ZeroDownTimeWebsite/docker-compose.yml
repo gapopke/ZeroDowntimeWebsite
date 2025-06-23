@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  web-blue:
+    build: ./blue
+    container_name: web-blue
+    ports:
+      - "8081:80"  # map container's port 80 to host 8081
+    environment:
+      DEPLOYMENT_COLOR: "blue"
+      VERSION_NUMBER: "1.0.0"
+
+  web-green:
+    build: ./green
+    container_name: web-green
+    ports:
+      - "8082:80"  # map container's port 80 to host 8082
+    environment:
+      DEPLOYMENT_COLOR: "green"
+      VERSION_NUMBER: "1.0.0"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-router
+    ports:
+      - "80:80"  # expose Nginx to host
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web-blue
+      - web-green
